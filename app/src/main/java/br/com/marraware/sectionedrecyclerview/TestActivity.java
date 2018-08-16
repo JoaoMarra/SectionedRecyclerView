@@ -8,8 +8,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
-import br.com.marraware.sectionedrecycler_library.RecyclerViewAdapterSection;
-import br.com.marraware.sectionedrecycler_library.SectionedRecyclerViewAdapter;
+import br.marraware.sectionedrecycler_library.RecyclerViewAdapterSection;
+import br.marraware.sectionedrecycler_library.SectionedRecyclerViewAdapter;
 
 /**
  * Created by joao_gabriel on 16/08/2018.

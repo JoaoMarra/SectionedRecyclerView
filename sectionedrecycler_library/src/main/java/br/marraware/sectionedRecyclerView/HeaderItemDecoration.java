@@ -1,19 +1,13 @@
-package br.com.marraware.sectionedrecycler_library;
+package br.marraware.sectionedRecyclerView;
 
-import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Rect;
-import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.view.Display;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.HashMap;
-
-import br.marraware.sectionedrecycler_library.R;
 
 /**
  * Created by joao_gabriel on 16/08/2018.

@@ -1,9 +1,7 @@
-package br.com.marraware.sectionedrecycler_library;
+package br.marraware.sectionedRecyclerView;
 
-import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.view.ViewGroup;
 
 /**
  * Created by joao_gabriel on 16/08/2018.

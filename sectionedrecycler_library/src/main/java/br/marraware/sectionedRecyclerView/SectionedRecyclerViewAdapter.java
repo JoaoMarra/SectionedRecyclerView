@@ -1,18 +1,13 @@
-package br.com.marraware.sectionedrecycler_library;
+package br.marraware.sectionedRecyclerView;
 
 import android.os.Handler;
 import android.support.annotation.NonNull;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import br.marraware.sectionedrecycler_library.R;
 
 /**
  * Created by joao_gabriel on 16/08/2018.
@@ -38,6 +33,7 @@ public class SectionedRecyclerViewAdapter extends RecyclerView.Adapter implement
         this.recyclerView = recyclerView;
         decoration = new HeaderItemDecoration(this);
         recyclerView.addItemDecoration(decoration);
+        recyclerView.setAdapter(this);
     }
 
     public boolean isStickHeader() {
