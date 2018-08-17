@@ -100,7 +100,8 @@ public class TestActivity extends AppCompatActivity {
         adapter.addSection(section);
         lastSection = new CustomSection(true, 10);
         adapter.addSection(lastSection);
-        recyclerView.setAdapter(adapter);
+        section = new CustomSection(true, 0);
+        adapter.putSection(section, 10);
     }
 
     public void addRow(View view) {

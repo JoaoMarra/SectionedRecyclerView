@@ -66,6 +66,21 @@ public class SectionedRecyclerViewAdapter extends RecyclerView.Adapter implement
         dataSetChanged();
     }
 
+    public void putSection(RecyclerViewAdapterSection section, int position) {
+        if(sectionList == null) {
+            sectionList = new ArrayList<>();
+        }
+        int indexOf = sectionList.indexOf(section);
+        if(indexOf != -1)
+            return;
+        if(position > sectionList.size())
+            position = sectionList.size();
+
+        sectionList.add(position, section);
+        section.setAdapter(this);
+        dataSetChanged();
+    }
+
     public void removeSection(RecyclerViewAdapterSection section) {
         if(sectionList != null) {
             int position = sectionList.indexOf(section);
@@ -75,6 +90,18 @@ public class SectionedRecyclerViewAdapter extends RecyclerView.Adapter implement
             }
             section.setAdapter(null);
         }
+    }
+
+    public RecyclerViewAdapterSection removeSection(int position) {
+        if(sectionList != null) {
+            if(position < sectionList.size()) {
+                RecyclerViewAdapterSection section = sectionList.remove(position);
+                section.setAdapter(null);
+                dataSetChanged();
+                return section;
+            }
+        }
+        return null;
     }
 
     public void clear() {
