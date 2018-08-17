@@ -96,3 +96,24 @@ And enable and disable stick to top on your adapter using `public void setStickH
     	//click logic
     }
 ```
+
+# Updating your section's data
+
+You can call `notifyDataSetChanged()` on your custom section;
+
+Never use `notifyDataSetChanged()` on your `SectionedRecyclerViewAdapter`. `SectionedRecyclerViewAdapter` uses cached counts to improve performance. If you want to update all your adapter use `dataSetChanged()`.
+
+```
+    ...
+    mySection.addNewRow(rowModel);
+    mySection.notifyDataSetChanged() //this will update the adapter/recycler
+    ...
+```
+```
+    ...
+    mySectionA.addNewRow(rowModelA);
+    mySectionB.addNewRow(rowModelB);
+    ...
+    sectionedAdapter.dataSetChanged() //this will update the adapter/recycler
+    ...
+```
