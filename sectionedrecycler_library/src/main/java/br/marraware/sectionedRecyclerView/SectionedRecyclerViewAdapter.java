@@ -3,7 +3,6 @@ package br.marraware.sectionedRecyclerView;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -15,7 +14,6 @@ import java.util.List;
  */
 public class SectionedRecyclerViewAdapter extends RecyclerView.Adapter implements HeaderItemDecoration.HeaderItemDecorationListener {
 
-    private RecyclerView recyclerView;
     private List<Integer> startOfSection;
     private List<RecyclerViewAdapterSection> sectionList;
     private int CACHED_ITEM_COUNT = 0;
@@ -36,12 +34,9 @@ public class SectionedRecyclerViewAdapter extends RecyclerView.Adapter implement
     private boolean stickHeader = true;
     private HeaderItemDecoration decoration;
 
-    public SectionedRecyclerViewAdapter(RecyclerView recyclerView) {
-        this.recyclerView = recyclerView;
+    public SectionedRecyclerViewAdapter() {
         startOfSection = new ArrayList<>();
         decoration = new HeaderItemDecoration(this);
-        recyclerView.addItemDecoration(decoration);
-        recyclerView.setAdapter(this);
     }
 
     public boolean isStickHeader() {
@@ -210,6 +205,11 @@ public class SectionedRecyclerViewAdapter extends RecyclerView.Adapter implement
         if(sectionList != null)
             return (position == sectionList.get(section).abstractItemCount()-1);
         return false;
+    }
+
+    @Override
+    public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
+        recyclerView.addItemDecoration(decoration);
     }
 
 }

@@ -15,7 +15,7 @@ allprojects {
 
 Now add on your app module\`s build.gradle dependecy:
 ```
-compile 'br.marraware:sectionedrecycler_library:1.6'
+compile 'br.marraware:sectionedrecycler_library:1.8'
 ```
 
 # How to use
@@ -46,10 +46,12 @@ Then add this section to your `SectionedRecyclerViewAdapter` object
 
 ```
 	...
-	SectionedRecyclerViewAdapter adapter = new SectionedRecyclerViewAdapter(recyclerView);
+	SectionedRecyclerViewAdapter adapter = new SectionedRecyclerViewAdapter();
 	CustomSection sectionA = new CustomSection();
 	adapter.addSection(sectionA);
 	...
+    recyclerView.setAdapter(adapter);
+    ...
 ```
 
 # Add header to section
@@ -76,10 +78,12 @@ class CustomSection extends RecyclerViewAdapterSection<Row> {
     ...
 ```
 
-And enable and disable stick to top on your adapter
+And enable and disable stick to top on your adapter using `public void setStickHeader(boolean stickHeader);`. The default value is `TRUE`.
 
 ```
-   public void setStickHeader(boolean stickHeader); //default is true
+   ...
+   adapter.setStickHeader(false);
+   ...
 ```
 
 # Row click event

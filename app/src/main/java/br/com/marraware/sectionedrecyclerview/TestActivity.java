@@ -91,7 +91,7 @@ public class TestActivity extends AppCompatActivity {
 
         RecyclerView recyclerView = findViewById(R.id.recycler);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new SectionedRecyclerViewAdapter(recyclerView);
+        adapter = new SectionedRecyclerViewAdapter();
         CustomSection section = new CustomSection(false, 2);
         adapter.addSection(section);
         section = new CustomSection(true, 3);
@@ -102,6 +102,7 @@ public class TestActivity extends AppCompatActivity {
         adapter.addSection(lastSection);
         section = new CustomSection(true, 0);
         adapter.putSection(section, 10);
+        recyclerView.setAdapter(adapter);
     }
 
     public void addRow(View view) {
