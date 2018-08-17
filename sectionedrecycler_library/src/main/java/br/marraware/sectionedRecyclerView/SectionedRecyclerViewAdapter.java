@@ -3,6 +3,7 @@ package br.marraware.sectionedRecyclerView;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -15,13 +16,19 @@ import java.util.List;
 public class SectionedRecyclerViewAdapter extends RecyclerView.Adapter implements HeaderItemDecoration.HeaderItemDecorationListener {
 
     private RecyclerView recyclerView;
+    private List<Integer> startOfSection;
     private List<RecyclerViewAdapterSection> sectionList;
     private int CACHED_ITEM_COUNT = 0;
+
+    private int LAST_SECTION_FOR_POSITION = -1;
+    private int LAST_SECTION_FOR_POSITION_POSITION = -1;
 
     private Handler handler = new Handler();
     private Runnable updateRunnable = new Runnable() {
         @Override
         public void run() {
+            LAST_SECTION_FOR_POSITION = -1;
+            LAST_SECTION_FOR_POSITION_POSITION = -1;
             notifyDataSetChanged();
         }
     };
@@ -31,6 +38,7 @@ public class SectionedRecyclerViewAdapter extends RecyclerView.Adapter implement
 
     public SectionedRecyclerViewAdapter(RecyclerView recyclerView) {
         this.recyclerView = recyclerView;
+        startOfSection = new ArrayList<>();
         decoration = new HeaderItemDecoration(this);
         recyclerView.addItemDecoration(decoration);
         recyclerView.setAdapter(this);
@@ -49,15 +57,31 @@ public class SectionedRecyclerViewAdapter extends RecyclerView.Adapter implement
         if(sectionList == null) {
             sectionList = new ArrayList<>();
         }
+        int indexOf = sectionList.indexOf(section);
+        if(indexOf != -1)
+            return;
+
         sectionList.add(section);
+        section.setAdapter(this);
         dataSetChanged();
     }
 
     public void removeSection(RecyclerViewAdapterSection section) {
         if(sectionList != null) {
-            sectionList.remove(section);
+            int position = sectionList.indexOf(section);
+            if(position != -1) {
+                sectionList.remove(position);
+                dataSetChanged();
+            }
+            section.setAdapter(null);
         }
-        dataSetChanged();
+    }
+
+    public void clear() {
+        if(sectionList != null) {
+            sectionList.clear();
+            dataSetChanged();
+        }
     }
 
     public void dataSetChanged() {
@@ -69,36 +93,37 @@ public class SectionedRecyclerViewAdapter extends RecyclerView.Adapter implement
         decoration.clear();
         CACHED_ITEM_COUNT = 0;
         if(sectionList != null) {
+            int start = 0;
+            startOfSection.clear();
             for(int i=0; i < sectionList.size(); i++) {
                 sectionList.get(i).recalculate(i);
+                startOfSection.add(start);
+                start += sectionList.get(i).abstractItemCount();
                 CACHED_ITEM_COUNT += sectionList.get(i).abstractItemCount();
             }
         }
     }
 
     private int getSectionForPosition(int position) {
-        int i = 0;
-        int posCount = 0;
-        if(sectionList != null) {
-            while (position >= posCount+sectionList.get(i).abstractItemCount()) {
-                posCount += sectionList.get(i).abstractItemCount();
-                i++;
-            }
-            return i;
+        if(LAST_SECTION_FOR_POSITION_POSITION == position) {
+            return LAST_SECTION_FOR_POSITION;
         }
+        int i = 0;
+        if(sectionList != null) {
+            for(i = 0;i < startOfSection.size() && position >= startOfSection.get(i); i++);
+            if(i >= startOfSection.size())
+                i = startOfSection.size()-1;
+            if(position < startOfSection.get(i))
+                i--;
+        }
+        LAST_SECTION_FOR_POSITION_POSITION = position;
+        LAST_SECTION_FOR_POSITION = i;
         return i;
     }
 
     private int getRealPosition(int position) {
-        int posCount = 0;
-        int i = 0;
-        if(sectionList != null) {
-            while (position >= posCount+sectionList.get(i).abstractItemCount()) {
-                posCount += sectionList.get(i).abstractItemCount();
-                i++;
-            }
-        }
-        return position-posCount;
+        int i = getSectionForPosition(position);
+        return position-startOfSection.get(i);
     }
 
     @Override
@@ -111,7 +136,7 @@ public class SectionedRecyclerViewAdapter extends RecyclerView.Adapter implement
     public final RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         RecyclerView.ViewHolder holder = null;
         if(sectionList != null) {
-            holder = sectionList.get(viewType).onCreateViewHolder();
+            holder = sectionList.get(viewType).abstractOnCreateViewHolder();
         }
         return holder;
     }
@@ -133,10 +158,11 @@ public class SectionedRecyclerViewAdapter extends RecyclerView.Adapter implement
     }
 
     @Override
-    public int getHeaderLayout(int headerPosition) {
-        if(sectionList != null)
-            return sectionList.get(headerPosition).getHeaderLayout();
-        return 0;
+    public View getHeaderView(RecyclerView parent, int section) {
+        if(sectionList != null) {
+            return sectionList.get(section).abstractGetHeaderView(parent);
+        }
+        return null;
     }
 
     @Override

@@ -16,22 +16,13 @@ import br.marraware.sectionedRecyclerView.SectionedRecyclerViewAdapter;
  */
 public class TestActivity extends AppCompatActivity {
 
-    class Row extends RecyclerView.ViewHolder implements View.OnClickListener {
+    class Row extends RecyclerView.ViewHolder {
 
         TextView textView;
 
         public Row() {
             super(View.inflate(TestActivity.this, R.layout.row, null));
             textView = itemView.findViewById(R.id.text_view);
-            itemView.setClickable(true);
-            itemView.setOnClickListener(this);
-        }
-
-        @Override
-        public void onClick(View v) {
-            int section = (int) v.getTag(R.id.ROW_SECTION);
-            int position = (int) v.getTag(R.id.ROW_POSITION);
-            System.out.println("ROW - "+section+" : "+position);
         }
     }
 
@@ -54,12 +45,15 @@ public class TestActivity extends AppCompatActivity {
         public void onBindViewHolder(Row viewHolder, int position) {
             int section = (int) viewHolder.itemView.getTag(R.id.ROW_SECTION);
             int pos = (int) viewHolder.itemView.getTag(R.id.ROW_POSITION);
-            viewHolder.textView.setText(getSectionPos()+" ROW "+section+" : "+pos);
+            if(count == 0)
+                viewHolder.textView.setText("\n\n=== VAZIO ===\n\n");
+            else
+                viewHolder.textView.setText(getSectionPos()+" ROW "+section+" : "+pos);
         }
 
         @Override
         public int getItemCount() {
-            return count;
+            return Math.max(count, 1);
         }
 
         @Override
@@ -76,6 +70,14 @@ public class TestActivity extends AppCompatActivity {
         public void onBindHeaderView(View header) {
             TextView textView = header.findViewById(R.id.text_view);
             textView.setText("HEADER("+getSectionPos()+") : "+count+" rows");
+        }
+
+        @Override
+        public void onItemClick(int position) {
+            System.out.println("ROW - "+getSectionPos()+" : "+position);
+            count--;
+            count = Math.max(count, 0);
+            notifyDataSetChanged();
         }
     }
 
@@ -94,7 +96,7 @@ public class TestActivity extends AppCompatActivity {
         adapter.addSection(section);
         section = new CustomSection(true, 3);
         adapter.addSection(section);
-        section = new CustomSection(false, 5);
+        section = new CustomSection(true, 5);
         adapter.addSection(section);
         lastSection = new CustomSection(true, 10);
         adapter.addSection(lastSection);
@@ -103,7 +105,6 @@ public class TestActivity extends AppCompatActivity {
 
     public void addRow(View view) {
         lastSection.count += 1;
-        adapter.setStickHeader(!adapter.isStickHeader());
-        adapter.dataSetChanged();
+        lastSection.notifyDataSetChanged();
     }
 }

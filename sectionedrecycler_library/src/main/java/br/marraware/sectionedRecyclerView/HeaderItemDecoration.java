@@ -27,7 +27,7 @@ public class HeaderItemDecoration extends RecyclerView.ItemDecoration {
         if(headerMap.containsKey(section)) {
             header = headerMap.get(section);
         } else {
-            header = LayoutInflater.from(parent.getContext()).inflate(mListener.getHeaderLayout(section), parent, false);
+            header = mListener.getHeaderView(parent, section);
             headerMap.put(section, header);
             mListener.bindHeaderData(header, section);
             measureHeader(parent, header);
@@ -79,7 +79,9 @@ public class HeaderItemDecoration extends RecyclerView.ItemDecoration {
                     View header = headerForSection(section, parent);
                     c.save();
                     if(mListener.isLastOfSection(position, section)) {
-                        c.translate(0, child.getTop());
+                        int translation = (child.getHeight()-header.getHeight())+child.getTop();
+                        if(translation < 0)
+                            c.translate(0, translation);
                     }
                     header.draw(c);
                     c.restore();
@@ -103,7 +105,7 @@ public class HeaderItemDecoration extends RecyclerView.ItemDecoration {
 
     public interface HeaderItemDecorationListener {
 
-        int getHeaderLayout(int section);
+        View getHeaderView(RecyclerView parent, int section);
 
         void bindHeaderData(View header, int section);
 
