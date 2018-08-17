@@ -24,7 +24,7 @@ Create your custom `RecyclerViewAdapterSection<RecyclerView.ViewHolder>`
 
 ```
 class CustomSection extends RecyclerViewAdapterSection<Row> {
-	@Override
+    @Override
     public Row onCreateViewHolder() {
         return new Row();
     }
@@ -58,8 +58,8 @@ You can add header to your section
 
 ```
 class CustomSection extends RecyclerViewAdapterSection<Row> {
-	...
-	@Override
+    ...
+    @Override
     public boolean hasHeader() {
         return true;
     }
@@ -76,12 +76,18 @@ class CustomSection extends RecyclerViewAdapterSection<Row> {
     ...
 ```
 
+And enable and disable stick to top on your adapter
+
+```
+   public void setStickHeader(boolean stickHeader); //default is true
+```
+
 # Row click event
 
 `SectionedRecyclerViewAdapter` also handle row clicks for you, just add this method to you `RecyclerViewAdapterSection<RecyclerView.ViewHolder>` class
 
 ```
-	@Override
+    @Override
     public void onItemClick(int position) {
     	//click logic
     }
