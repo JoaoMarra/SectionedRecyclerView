@@ -1,8 +1,11 @@
 package br.marraware.sectionedRecyclerView;
 
+import android.graphics.Rect;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -33,6 +36,41 @@ public class SectionedRecyclerViewAdapter extends RecyclerView.Adapter implement
 
     private boolean stickHeader = true;
     private HeaderItemDecoration decoration;
+    private RecyclerView.OnItemTouchListener onItemTouchListener = new RecyclerView.OnItemTouchListener() {
+        @Override
+        public boolean onInterceptTouchEvent(RecyclerView recyclerView, MotionEvent motionEvent) {
+            if(motionEvent.getAction() == MotionEvent.ACTION_UP) {
+                int overSection = decoration.overSectionOnPosition(motionEvent.getX(), motionEvent.getY());
+                if(overSection != -1) {
+                    if (overSection < sectionList.size()) {
+                        sectionList.get(overSection).onHeaderClick();
+                        return true;
+                    }
+                }
+                View view = recyclerView.findChildViewUnder(motionEvent.getX(), motionEvent.getY());
+                if (view == null) {
+                    int section = decoration.sectionForHeaderOnPosition(motionEvent.getX(), motionEvent.getY());
+                    if (section != -1) {
+                        if (section < sectionList.size()) {
+                            sectionList.get(section).onHeaderClick();
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+
+        @Override
+        public void onTouchEvent(RecyclerView recyclerView, MotionEvent motionEvent) {
+
+        }
+
+        @Override
+        public void onRequestDisallowInterceptTouchEvent(boolean b) {
+
+        }
+    };
 
     public SectionedRecyclerViewAdapter() {
         startOfSection = new ArrayList<>();
@@ -208,8 +246,16 @@ public class SectionedRecyclerViewAdapter extends RecyclerView.Adapter implement
     }
 
     @Override
+    public int lastPositionForSection(int section) {
+        if(section == sectionList.size()-1)
+            return CACHED_ITEM_COUNT-1;
+        return startOfSection.get(section+1)-1;
+    }
+
+    @Override
     public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
         recyclerView.addItemDecoration(decoration);
+        recyclerView.addOnItemTouchListener(onItemTouchListener);
     }
 
 }

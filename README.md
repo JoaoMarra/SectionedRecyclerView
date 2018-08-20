@@ -15,7 +15,7 @@ allprojects {
 
 Now add on your app module\`s build.gradle dependecy:
 ```
-compile 'br.marraware:sectionedrecycler_library:1.8'
+compile 'br.marraware:sectionedrecycler_library:1.9'
 ```
 
 # How to use
@@ -86,14 +86,25 @@ And enable and disable stick to top on your adapter using `public void setStickH
    ...
 ```
 
-# Row click event
+# Row and Header click event
 
-`SectionedRecyclerViewAdapter` also handle row clicks for you, just add this method to you `RecyclerViewAdapterSection<RecyclerView.ViewHolder>` class
+`SectionedRecyclerViewAdapter` also handle row and header clicks for you.
+
+For the row click event just add this method to you `RecyclerViewAdapterSection<RecyclerView.ViewHolder>` class
 
 ```
     @Override
     public void onItemClick(int position) {
     	//click logic
+    }
+```
+
+For the header click event just add this method to you `RecyclerViewAdapterSection<RecyclerView.ViewHolder>` class
+
+```
+    @Override
+    public void onHeaderClick() {
+        //click logic
     }
 ```
 

@@ -5,6 +5,8 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
 
@@ -53,7 +55,7 @@ public class TestActivity extends AppCompatActivity {
 
         @Override
         public int getItemCount() {
-            return Math.max(count, 1);
+            return Math.max(count, 0);
         }
 
         @Override
@@ -79,6 +81,11 @@ public class TestActivity extends AppCompatActivity {
             count = Math.max(count, 0);
             notifyDataSetChanged();
         }
+
+        @Override
+        public void onHeaderClick() {
+            Log.d("TEST", "CLICK TITLE - "+getSectionPos());
+        }
     }
 
     SectionedRecyclerViewAdapter adapter;
@@ -96,7 +103,7 @@ public class TestActivity extends AppCompatActivity {
         adapter.addSection(section);
         section = new CustomSection(true, 3);
         adapter.addSection(section);
-        section = new CustomSection(true, 5);
+        section = new CustomSection(false, 5);
         adapter.addSection(section);
         lastSection = new CustomSection(true, 10);
         adapter.addSection(lastSection);

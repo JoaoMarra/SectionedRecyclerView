@@ -1,6 +1,7 @@
 package br.marraware.sectionedRecyclerView;
 
 import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.graphics.Rect;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -8,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.HashMap;
+import java.util.Iterator;
 
 /**
  * Created by joao_gabriel on 16/08/2018.
@@ -15,7 +17,9 @@ import java.util.HashMap;
 public class HeaderItemDecoration extends RecyclerView.ItemDecoration {
 
     private HeaderItemDecorationListener mListener;
-    private HashMap<Integer, View> headerMap;
+    private HashMap<Integer, HeaderContainer> headerMap;
+    private Rect overRect = new Rect();
+    private int overSection = -1;
 
     public HeaderItemDecoration(HeaderItemDecorationListener mListener) {
         this.mListener = mListener;
@@ -23,16 +27,18 @@ public class HeaderItemDecoration extends RecyclerView.ItemDecoration {
     }
 
     private View headerForSection(int section, RecyclerView parent) {
-        View header;
+        HeaderContainer headerContainer;
         if(headerMap.containsKey(section)) {
-            header = headerMap.get(section);
+            headerContainer = headerMap.get(section);
         } else {
-            header = mListener.getHeaderView(parent, section);
-            headerMap.put(section, header);
+            View header = mListener.getHeaderView(parent, section);
+            header.setClickable(true);
+            headerContainer = new HeaderContainer(header);
+            headerMap.put(section, headerContainer);
             mListener.bindHeaderData(header, section);
             measureHeader(parent, header);
         }
-        return header;
+        return headerContainer.getHeaderView();
     }
 
     public void clear() {
@@ -54,14 +60,21 @@ public class HeaderItemDecoration extends RecyclerView.ItemDecoration {
         int childCount = parent.getChildCount();
         View child, header;
         int section, position;
+        int x = 0;
+        int y, x2, y2;
         for (int i = 0; i < childCount; i++) {
             child = parent.getChildAt(i);
             section = (int) child.getTag(R.id.ROW_SECTION);
             position = (int) child.getTag(R.id.ROW_POSITION);
             if (mListener.hasHeader(section) && position == 0) {
                 header = headerForSection(section, parent);
+                x = 0;
+                y = child.getTop() - header.getHeight() - parent.getScrollY();
+                x2 = header.getWidth();
+                y2 = y+header.getHeight();
+                headerMap.get(section).setHeaderRect(x, y, x2, y2);
                 c.save();
-                c.translate(0, child.getTop() - header.getHeight() - parent.getScrollY());
+                c.translate(x, y);
                 header.draw(c);
                 c.restore();
             }
@@ -75,18 +88,35 @@ public class HeaderItemDecoration extends RecyclerView.ItemDecoration {
                 View child = parent.getChildAt(0);
                 int section = (int) child.getTag(R.id.ROW_SECTION);
                 int position = (int) child.getTag(R.id.ROW_POSITION);
+                int x, y, x2, y2;
                 if(mListener.hasHeader(section)) {
                     View header = headerForSection(section, parent);
                     c.save();
-                    if(mListener.isLastOfSection(position, section)) {
-                        int translation = (child.getHeight()-header.getHeight())+child.getTop();
-                        if(translation < 0)
-                            c.translate(0, translation);
+                    x = 0;
+                    x2 = header.getWidth();
+                    y = 0;
+                    y2 = y+header.getHeight();
+                    RecyclerView.ViewHolder lastVH = parent.findViewHolderForAdapterPosition(mListener.lastPositionForSection(section));
+                    if(lastVH != null) {
+                        View lastView = lastVH.itemView;
+                        if(lastView != null && lastView.getBottom() < y2) {
+                            y2 = lastView.getBottom();
+                            y = y2-header.getHeight();
+                        }
                     }
+                    c.translate(0, y);
                     header.draw(c);
                     c.restore();
+                    overRect.set(x, y, x2, y2);
+                    overSection = section;
+                } else {
+                    overSection = -1;
                 }
+            } else {
+                overSection = -1;
             }
+        } else {
+            overSection = -1;
         }
     }
 
@@ -103,6 +133,30 @@ public class HeaderItemDecoration extends RecyclerView.ItemDecoration {
         header.layout(0, 0, header.getMeasuredWidth(), header.getMeasuredHeight());
     }
 
+    public int overSectionOnPosition(float x, float y) {
+        if(overSection != -1) {
+            if(overRect.contains((int) x, (int) y))
+                return overSection;
+        }
+        return -1;
+    }
+
+    public int sectionForHeaderOnPosition(float x, float y) {
+        Iterator<Integer> iterator = headerMap.keySet().iterator();
+        Integer key;
+        while (iterator.hasNext()) {
+            key = iterator.next();
+            if(headerMap.get(key).getHeaderRect().contains((int)x, (int)y)) {
+                return key;
+            }
+        }
+        return -1;
+    }
+
+    public HeaderContainer headerViewForSection(int section) {
+        return headerMap.get(section);
+    }
+
     public interface HeaderItemDecorationListener {
 
         View getHeaderView(RecyclerView parent, int section);
@@ -112,6 +166,8 @@ public class HeaderItemDecoration extends RecyclerView.ItemDecoration {
         boolean hasHeader(int section);
 
         boolean isLastOfSection(int position, int section);
+
+        int lastPositionForSection(int section);
 
         boolean isStickHeader();
     }

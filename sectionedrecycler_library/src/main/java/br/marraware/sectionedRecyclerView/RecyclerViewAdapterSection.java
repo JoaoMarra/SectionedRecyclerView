@@ -59,6 +59,7 @@ public abstract class RecyclerViewAdapterSection<ROW extends RecyclerView.ViewHo
     }
 
     public void onItemClick(int position) {}
+    public void onHeaderClick() {}
 
     public final void notifyDataSetChanged() {
         if(adapter != null) {
