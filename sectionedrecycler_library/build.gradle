@@ -101,7 +101,7 @@ artifacts {
     archives sourcesJar
 }
 
-Properties properties = new Properties()
+/*Properties properties = new Properties()
 File propFile = "${System.properties['user.home']}${File.separator}.gradle${File.separator}bintray.properties" as File
 properties.load(propFile.newDataInputStream())
 
@@ -120,4 +120,4 @@ bintray {
         licenses = ["Apache-2.0"]
         publish = true
     }
-}
+}*/

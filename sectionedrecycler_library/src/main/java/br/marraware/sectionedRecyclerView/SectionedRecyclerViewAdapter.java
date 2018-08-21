@@ -3,6 +3,7 @@ package br.marraware.sectionedRecyclerView;
 import android.graphics.Rect;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -69,6 +70,36 @@ public class SectionedRecyclerViewAdapter extends RecyclerView.Adapter implement
         @Override
         public void onRequestDisallowInterceptTouchEvent(boolean b) {
 
+        }
+    };
+
+    private RecyclerView recyclerView;
+    boolean checkForGridLayout;
+    private int spanCount = 1;
+    private GridLayoutManager.SpanSizeLookup oldSpanSizeLookup;
+    private GridLayoutManager.SpanSizeLookup spanSizeLookup = new GridLayoutManager.SpanSizeLookup() {
+        @Override
+        public int getSpanSize(int position) {
+            int section = getSectionForPosition(position);
+            int lastOfSection = lastPositionForSection(section);
+            int firstOfSection = firstPositionForSection(section);
+            int lastRow = lastOfSection-spanCount;
+            if(lastRow < firstOfSection)
+                lastRow = firstOfSection;
+            int spanCounter = 0;
+            for(int i = lastRow; i < position; i++) {
+                spanCounter += getSpanSize(i);
+            }
+            spanCounter %= spanCount;
+            int newCount;
+            if(position == lastOfSection)
+                newCount = spanCount-spanCounter;
+            else
+                newCount = Math.min(spanCount-spanCounter, 1);
+            int oldCount = 1;
+            if(oldSpanSizeLookup != null)
+                oldCount = oldSpanSizeLookup.getSpanSize(position);
+            return Math.max(oldCount, newCount);
         }
     };
 
@@ -214,6 +245,15 @@ public class SectionedRecyclerViewAdapter extends RecyclerView.Adapter implement
 
     @Override
     public final int getItemCount() {
+        if(!checkForGridLayout) {
+            if(recyclerView.getLayoutManager() != null && recyclerView.getLayoutManager() instanceof GridLayoutManager) {
+                GridLayoutManager gridLayoutManager = (GridLayoutManager) recyclerView.getLayoutManager();
+                oldSpanSizeLookup = gridLayoutManager.getSpanSizeLookup();
+                gridLayoutManager.setSpanSizeLookup(spanSizeLookup);
+                spanCount = gridLayoutManager.getSpanCount();
+            }
+            checkForGridLayout = true;
+        }
         return CACHED_ITEM_COUNT;
     }
 
@@ -246,6 +286,11 @@ public class SectionedRecyclerViewAdapter extends RecyclerView.Adapter implement
     }
 
     @Override
+    public int firstPositionForSection(int section) {
+        return startOfSection.get(section);
+    }
+
+    @Override
     public int lastPositionForSection(int section) {
         if(section == sectionList.size()-1)
             return CACHED_ITEM_COUNT-1;
@@ -256,6 +301,13 @@ public class SectionedRecyclerViewAdapter extends RecyclerView.Adapter implement
     public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
         recyclerView.addItemDecoration(decoration);
         recyclerView.addOnItemTouchListener(onItemTouchListener);
+        checkForGridLayout = false;
+        this.recyclerView = recyclerView;
     }
 
+    @Override
+    public void onDetachedFromRecyclerView(@NonNull RecyclerView recyclerView) {
+        checkForGridLayout = false;
+        this.recyclerView = null;
+    }
 }

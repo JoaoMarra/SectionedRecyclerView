@@ -3,7 +3,9 @@ package br.marraware.sectionedRecyclerView;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,7 +51,25 @@ public class HeaderItemDecoration extends RecyclerView.ItemDecoration {
     public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
         int section = (int) view.getTag(R.id.ROW_SECTION);
         int position = (int) view.getTag(R.id.ROW_POSITION);
-        if(mListener.hasHeader(section) && position == 0) {
+        int lastHeaderPosition = 0;
+        if(parent.getLayoutManager() != null && parent.getLayoutManager() instanceof GridLayoutManager) {
+            GridLayoutManager gridLayoutManager = (GridLayoutManager) parent.getLayoutManager();
+            GridLayoutManager.SpanSizeLookup spanSizeLookup = gridLayoutManager.getSpanSizeLookup();
+            int spanCount = gridLayoutManager.getSpanCount();
+            if(spanSizeLookup != null) {
+                int viewPosition = mListener.firstPositionForSection(section);
+                int lastPosition = mListener.lastPositionForSection(section);
+                while (lastHeaderPosition < spanCount && viewPosition < lastPosition) {
+                    lastHeaderPosition += spanSizeLookup.getSpanSize(viewPosition);
+                    if(lastHeaderPosition < spanCount)
+                        viewPosition++;
+                }
+                lastHeaderPosition = viewPosition-mListener.firstPositionForSection(section);
+            } else {
+                lastHeaderPosition = spanCount;
+            }
+        }
+        if(mListener.hasHeader(section) && position <= lastHeaderPosition) {
             View header = headerForSection(section, parent);
             outRect.top = header.getHeight();
         }
@@ -166,6 +186,8 @@ public class HeaderItemDecoration extends RecyclerView.ItemDecoration {
         boolean hasHeader(int section);
 
         boolean isLastOfSection(int position, int section);
+
+        int firstPositionForSection(int section);
 
         int lastPositionForSection(int section);
 

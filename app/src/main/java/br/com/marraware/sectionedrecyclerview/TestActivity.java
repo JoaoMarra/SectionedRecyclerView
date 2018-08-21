@@ -3,6 +3,7 @@ package br.com.marraware.sectionedrecyclerview;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -97,13 +98,20 @@ public class TestActivity extends AppCompatActivity {
         setContentView(R.layout.activity);
 
         RecyclerView recyclerView = findViewById(R.id.recycler);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        GridLayoutManager manager = new GridLayoutManager(this, 5);
+        manager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+            @Override
+            public int getSpanSize(int position) {
+                return 1;
+            }
+        });
+        recyclerView.setLayoutManager(manager);
         adapter = new SectionedRecyclerViewAdapter();
         CustomSection section = new CustomSection(false, 2);
         adapter.addSection(section);
         section = new CustomSection(true, 3);
         adapter.addSection(section);
-        section = new CustomSection(false, 5);
+        section = new CustomSection(true, 5);
         adapter.addSection(section);
         lastSection = new CustomSection(true, 10);
         adapter.addSection(lastSection);
