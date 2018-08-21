@@ -2,7 +2,7 @@ apply plugin: 'com.android.library'
 apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: "com.jfrog.bintray"
 
-version = "1.9"
+version = "2.0"
 
 android {
     compileSdkVersion 27
@@ -11,7 +11,7 @@ android {
     defaultConfig {
         minSdkVersion 11
         targetSdkVersion 27
-        versionCode 10
+        versionCode 11
         versionName version
     }
 
@@ -101,7 +101,7 @@ artifacts {
     archives sourcesJar
 }
 
-/*Properties properties = new Properties()
+Properties properties = new Properties()
 File propFile = "${System.properties['user.home']}${File.separator}.gradle${File.separator}bintray.properties" as File
 properties.load(propFile.newDataInputStream())
 
@@ -120,4 +120,4 @@ bintray {
         licenses = ["Apache-2.0"]
         publish = true
     }
-}*/
+}

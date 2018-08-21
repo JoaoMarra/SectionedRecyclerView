@@ -74,32 +74,31 @@ public class SectionedRecyclerViewAdapter extends RecyclerView.Adapter implement
     };
 
     private RecyclerView recyclerView;
-    boolean checkForGridLayout;
+    private boolean checkForGridLayout;
     private int spanCount = 1;
     private GridLayoutManager.SpanSizeLookup oldSpanSizeLookup;
     private GridLayoutManager.SpanSizeLookup spanSizeLookup = new GridLayoutManager.SpanSizeLookup() {
         @Override
         public int getSpanSize(int position) {
             int section = getSectionForPosition(position);
-            int lastOfSection = lastPositionForSection(section);
             int firstOfSection = firstPositionForSection(section);
-            int lastRow = lastOfSection-spanCount;
-            if(lastRow < firstOfSection)
-                lastRow = firstOfSection;
-            int spanCounter = 0;
-            for(int i = lastRow; i < position; i++) {
-                spanCounter += getSpanSize(i);
-            }
-            spanCounter %= spanCount;
-            int newCount;
-            if(position == lastOfSection)
-                newCount = spanCount-spanCounter;
-            else
-                newCount = Math.min(spanCount-spanCounter, 1);
-            int oldCount = 1;
+            int lastOfSection = lastPositionForSection(section);
+            int oldSpanSize = 1;
+            int newSpanSize = 1;
             if(oldSpanSizeLookup != null)
-                oldCount = oldSpanSizeLookup.getSpanSize(position);
-            return Math.max(oldCount, newCount);
+                oldSpanSize = oldSpanSizeLookup.getSpanSize(position);
+            if(position == lastOfSection) {
+                if(position == firstOfSection) {
+                    newSpanSize = spanCount;
+                } else {
+                    int spanIndex = getSpanIndex(position-1, spanCount)+1;
+                    if(spanIndex >= spanCount)
+                        spanIndex = 0;
+                    newSpanSize = spanCount-spanIndex;
+                }
+
+            }
+            return Math.max(oldSpanSize, newSpanSize);
         }
     };
 
