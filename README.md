@@ -1,5 +1,5 @@
 # SectionedRecyclerView
-Easy lib for sectioned Recycler View with stick header
+Easy lib for sectioned Recycler View with stick header. Works with LinearLayout (Vertical) and GridLayout.
 
 # Add to project
 
@@ -15,7 +15,7 @@ allprojects {
 
 Now add on your app module\`s build.gradle dependecy:
 ```
-compile 'br.marraware:sectionedrecycler_library:1.9'
+compile 'br.marraware:sectionedrecycler_library:2.0'
 ```
 
 # How to use
