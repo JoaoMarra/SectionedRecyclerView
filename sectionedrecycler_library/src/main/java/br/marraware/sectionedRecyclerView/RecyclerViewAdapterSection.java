@@ -49,6 +49,9 @@ public abstract class RecyclerViewAdapterSection<ROW extends RecyclerView.ViewHo
     public boolean hasHeader() {
         return false;
     }
+    public boolean stickHeader() {
+        return true;
+    }
     public int getHeaderLayout() {
         return 0;
     }

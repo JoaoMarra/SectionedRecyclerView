@@ -111,6 +111,10 @@ public class SectionedRecyclerViewAdapter extends RecyclerView.Adapter implement
         return stickHeader;
     }
 
+    public boolean isStickHeaderForSection(int section) {
+        return stickHeader && sectionList.get(section).stickHeader();
+    }
+
     public void setStickHeader(boolean stickHeader) {
         this.stickHeader = stickHeader;
         handler.post(updateRunnable);

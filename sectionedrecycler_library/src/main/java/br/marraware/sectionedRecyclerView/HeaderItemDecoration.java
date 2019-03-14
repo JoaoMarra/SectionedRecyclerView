@@ -103,35 +103,30 @@ public class HeaderItemDecoration extends RecyclerView.ItemDecoration {
 
     @Override
     public void onDrawOver(Canvas c, RecyclerView parent, RecyclerView.State state) {
-        if(mListener.isStickHeader()) {
-            if(parent.getChildCount() > 0) {
-                View child = parent.getChildAt(0);
-                int section = (int) child.getTag(R.id.ROW_SECTION);
-                int position = (int) child.getTag(R.id.ROW_POSITION);
-                int x, y, x2, y2;
-                if(mListener.hasHeader(section)) {
-                    View header = headerForSection(section, parent);
-                    c.save();
-                    x = 0;
-                    x2 = header.getWidth();
-                    y = 0;
-                    y2 = y+header.getHeight();
-                    RecyclerView.ViewHolder lastVH = parent.findViewHolderForAdapterPosition(mListener.lastPositionForSection(section));
-                    if(lastVH != null) {
-                        View lastView = lastVH.itemView;
-                        if(lastView != null && lastView.getBottom() < y2) {
-                            y2 = lastView.getBottom();
-                            y = y2-header.getHeight();
-                        }
+        if(parent.getChildCount() > 0) {
+            View child = parent.getChildAt(0);
+            int section = (int) child.getTag(R.id.ROW_SECTION);
+            int x, y, x2, y2;
+            if(mListener.hasHeader(section) && mListener.isStickHeaderForSection(section)) {
+                View header = headerForSection(section, parent);
+                c.save();
+                x = 0;
+                x2 = header.getWidth();
+                y = 0;
+                y2 = y+header.getHeight();
+                RecyclerView.ViewHolder lastVH = parent.findViewHolderForAdapterPosition(mListener.lastPositionForSection(section));
+                if(lastVH != null) {
+                    View lastView = lastVH.itemView;
+                    if(lastView != null && lastView.getBottom() < y2) {
+                        y2 = lastView.getBottom();
+                        y = y2-header.getHeight();
                     }
-                    c.translate(0, y);
-                    header.draw(c);
-                    c.restore();
-                    overRect.set(x, y, x2, y2);
-                    overSection = section;
-                } else {
-                    overSection = -1;
                 }
+                c.translate(0, y);
+                header.draw(c);
+                c.restore();
+                overRect.set(x, y, x2, y2);
+                overSection = section;
             } else {
                 overSection = -1;
             }
@@ -191,6 +186,6 @@ public class HeaderItemDecoration extends RecyclerView.ItemDecoration {
 
         int lastPositionForSection(int section);
 
-        boolean isStickHeader();
+        boolean isStickHeaderForSection(int section);
     }
 }
