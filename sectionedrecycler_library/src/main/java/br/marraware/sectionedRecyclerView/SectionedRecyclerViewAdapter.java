@@ -198,7 +198,7 @@ public class SectionedRecyclerViewAdapter extends RecyclerView.Adapter implement
         }
     }
 
-    private int getSectionForPosition(int position) {
+    public final int getSectionForPosition(int position) {
         if(LAST_SECTION_FOR_POSITION_POSITION == position) {
             return LAST_SECTION_FOR_POSITION;
         }
@@ -215,7 +215,7 @@ public class SectionedRecyclerViewAdapter extends RecyclerView.Adapter implement
         return i;
     }
 
-    private int getRealPosition(int position) {
+    public final int getRealPosition(int position) {
         int i = getSectionForPosition(position);
         return position-startOfSection.get(i);
     }
