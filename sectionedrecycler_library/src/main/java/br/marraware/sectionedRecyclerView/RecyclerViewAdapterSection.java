@@ -30,14 +30,14 @@ public abstract class RecyclerViewAdapterSection<ROW extends RecyclerView.ViewHo
         return CACHED_ITEM_COUNT;
     }
 
-    public ROW abstractOnCreateViewHolder() {
-        ROW holder = onCreateViewHolder();
+    public ROW abstractOnCreateViewHolder(int realPosition) {
+        ROW holder = onCreateViewHolder(realPosition);
         holder.itemView.setClickable(true);
         holder.itemView.setOnClickListener(itemOnClickListener);
         return holder;
     }
 
-    public abstract ROW onCreateViewHolder();
+    public abstract ROW onCreateViewHolder(int position);
     public abstract void onBindViewHolder(ROW viewHolder, int position);
     public abstract int getItemCount();
 

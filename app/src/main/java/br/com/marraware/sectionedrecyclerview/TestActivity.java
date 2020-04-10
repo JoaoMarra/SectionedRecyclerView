@@ -40,7 +40,7 @@ public class TestActivity extends AppCompatActivity {
         }
 
         @Override
-        public Row onCreateViewHolder() {
+        public Row onCreateViewHolder(int position) {
             return new Row();
         }
 
@@ -98,7 +98,7 @@ public class TestActivity extends AppCompatActivity {
         setContentView(R.layout.activity);
 
         RecyclerView recyclerView = findViewById(R.id.recycler);
-        GridLayoutManager manager = new GridLayoutManager(this, 5);
+        GridLayoutManager manager = new GridLayoutManager(this, 3);
         manager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
             @Override
             public int getSpanSize(int position) {
