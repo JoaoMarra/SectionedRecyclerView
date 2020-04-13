@@ -222,16 +222,17 @@ public class SectionedRecyclerViewAdapter extends RecyclerView.Adapter implement
 
     @Override
     public final int getItemViewType(int position) {
-        return getSectionForPosition(position);
+        return position;
     }
 
     @NonNull
     @Override
     public final RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         RecyclerView.ViewHolder holder = null;
-        int realPosition = getRealPosition(LAST_SECTION_FOR_POSITION_POSITION);
+        int section = getSectionForPosition(viewType);
+        int realPosition = getRealPosition(viewType);
         if(sectionList != null) {
-            holder = sectionList.get(viewType).abstractOnCreateViewHolder(realPosition);
+            holder = sectionList.get(section).abstractOnCreateViewHolder(realPosition);
         }
         return holder;
     }
