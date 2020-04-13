@@ -11,7 +11,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by joao_gabriel on 16/08/2018.
@@ -102,6 +104,8 @@ public class SectionedRecyclerViewAdapter extends RecyclerView.Adapter implement
         }
     };
 
+    private Map<Integer, Integer> viewTypeMap = new HashMap<>();
+
     public SectionedRecyclerViewAdapter() {
         startOfSection = new ArrayList<>();
         decoration = new HeaderItemDecoration(this);
@@ -179,6 +183,7 @@ public class SectionedRecyclerViewAdapter extends RecyclerView.Adapter implement
     }
 
     public void dataSetChanged() {
+        viewTypeMap.clear();
         recalculate();
         handler.post(updateRunnable);
     }
@@ -222,15 +227,20 @@ public class SectionedRecyclerViewAdapter extends RecyclerView.Adapter implement
 
     @Override
     public final int getItemViewType(int position) {
-        return position;
+        int section = getSectionForPosition(position);
+        int realPosition = getRealPosition(position);
+        int hash = sectionList.get(section).abstractOnCreateViewHolder(realPosition).hashCode();
+        viewTypeMap.put(hash, position);
+        return hash;
     }
 
     @NonNull
     @Override
     public final RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         RecyclerView.ViewHolder holder = null;
-        int section = getSectionForPosition(viewType);
-        int realPosition = getRealPosition(viewType);
+        int position = viewTypeMap.get(viewType);
+        int section = getSectionForPosition(position);
+        int realPosition = getRealPosition(position);
         if(sectionList != null) {
             holder = sectionList.get(section).abstractOnCreateViewHolder(realPosition);
         }
