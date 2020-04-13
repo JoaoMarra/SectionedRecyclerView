@@ -1,19 +1,15 @@
 package br.marraware.sectionedRecyclerView;
 
-import android.graphics.Rect;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by joao_gabriel on 16/08/2018.
@@ -104,8 +100,6 @@ public class SectionedRecyclerViewAdapter extends RecyclerView.Adapter implement
         }
     };
 
-    private Map<Integer, Integer> viewTypeMap = new HashMap<>();
-
     public SectionedRecyclerViewAdapter() {
         startOfSection = new ArrayList<>();
         decoration = new HeaderItemDecoration(this);
@@ -183,7 +177,6 @@ public class SectionedRecyclerViewAdapter extends RecyclerView.Adapter implement
     }
 
     public void dataSetChanged() {
-        viewTypeMap.clear();
         recalculate();
         handler.post(updateRunnable);
     }
@@ -227,24 +220,49 @@ public class SectionedRecyclerViewAdapter extends RecyclerView.Adapter implement
 
     @Override
     public final int getItemViewType(int position) {
-        int section = getSectionForPosition(position);
-        int realPosition = getRealPosition(position);
-        int hash = sectionList.get(section).abstractOnCreateViewHolder(realPosition).hashCode();
-        viewTypeMap.put(hash, position);
-        return hash;
+        if(multipleViewHoldersOnSingleSection()) {
+            int section = getSectionForPosition(position);
+            int realPosition = getRealPosition(position);
+            int insideSectionViewType = sectionList.get(section).getItemViewType(realPosition);
+            if(insideSectionViewType == -1)
+                return -(section+1);
+            return insideSectionViewType;
+        } else {
+            return getSectionForPosition(position);
+        }
     }
 
     @NonNull
     @Override
     public final RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        RecyclerView.ViewHolder holder = null;
-        int position = viewTypeMap.get(viewType);
-        int section = getSectionForPosition(position);
-        int realPosition = getRealPosition(position);
-        if(sectionList != null) {
-            holder = sectionList.get(section).abstractOnCreateViewHolder(realPosition);
+        if(multipleViewHoldersOnSingleSection()) {
+            RecyclerView.ViewHolder holder = null;
+            if(viewType < 0) {
+                viewType *= -1;
+                viewType -= 1;
+                int section = getSectionForPosition(viewType);
+                if(sectionList != null) {
+                    holder = sectionList.get(section).abstractOnCreateViewHolder();
+                }
+                return holder;
+            } else {
+                return onCreateViewHolder(viewType);
+            }
+        } else {
+            RecyclerView.ViewHolder holder = null;
+            if(sectionList != null) {
+                holder = sectionList.get(viewType).abstractOnCreateViewHolder();
+            }
+            return holder;
         }
-        return holder;
+    }
+
+    public boolean multipleViewHoldersOnSingleSection() {
+        return false;
+    }
+
+    public RecyclerView.ViewHolder onCreateViewHolder(int viewType) {
+        return null;
     }
 
     @Override

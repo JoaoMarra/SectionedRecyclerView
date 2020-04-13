@@ -40,7 +40,7 @@ public class TestActivity extends AppCompatActivity {
         }
 
         @Override
-        public Row onCreateViewHolder(int position) {
+        public Row onCreateViewHolder() {
             return new Row();
         }
 
