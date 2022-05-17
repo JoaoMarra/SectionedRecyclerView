@@ -1,8 +1,10 @@
 plugins {
     id 'com.android.library'
+    id 'maven-publish'
 }
 
 android {
+    namespace = 'br.marraware.sectionedRecyclerView'
     compileSdk 31
 
     defaultConfig {
@@ -22,9 +24,27 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    publishing {
+        singleVariant('release') {
+            withSourcesJar()
+        }
+    }
 }
 
 dependencies {
     implementation 'androidx.appcompat:appcompat:1.4.1'
     implementation 'com.google.android.material:material:1.6.0'
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                from components.release
+                groupId = 'br.marraware'
+                artifactId = 'sectionedRecyclerView'
+                version = '3.2'
+            }
+        }
+    }
 }

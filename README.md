@@ -16,7 +16,7 @@ allprojects {
 
 Now add on your app module\`s build.gradle dependecy:
 ```
-implementation 'com.github.JoaoMarra:SectionedRecyclerView:3.1'
+implementation 'com.github.JoaoMarra:SectionedRecyclerView:3.2'
 ```
 
 # How to use
