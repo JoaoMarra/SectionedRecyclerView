@@ -1,14 +1,12 @@
 package br.marraware.sectionedRecyclerView;
 
 import android.graphics.Canvas;
-import android.graphics.Paint;
 import android.graphics.Rect;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.HashMap;
 import java.util.Iterator;

@@ -1,15 +1,15 @@
 package br.com.marraware.sectionedrecyclerview;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import br.marraware.sectionedRecyclerView.RecyclerViewAdapterSection;
 import br.marraware.sectionedRecyclerView.SectionedRecyclerViewAdapter;
@@ -46,8 +46,8 @@ public class TestActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(Row viewHolder, int position) {
-            int section = (int) viewHolder.itemView.getTag(R.id.ROW_SECTION);
-            int pos = (int) viewHolder.itemView.getTag(R.id.ROW_POSITION);
+            int section = (int) viewHolder.itemView.getTag(br.marraware.sectionedRecyclerView.R.id.ROW_SECTION);
+            int pos = (int) viewHolder.itemView.getTag(br.marraware.sectionedRecyclerView.R.id.ROW_POSITION);
             if(count == 0)
                 viewHolder.textView.setText("\n\n=== VAZIO ===\n\n");
             else
@@ -84,8 +84,8 @@ public class TestActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onHeaderClick() {
-            Log.d("TEST", "CLICK TITLE - "+getSectionPos());
+        public void onHeaderClick(float x, float y) {
+            Log.d("TEST", "CLICK TITLE - "+getSectionPos()+"("+x+","+y+")");
         }
     }
 

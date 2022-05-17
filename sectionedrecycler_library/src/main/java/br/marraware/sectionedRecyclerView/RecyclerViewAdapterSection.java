@@ -1,8 +1,9 @@
 package br.marraware.sectionedRecyclerView;
 
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * Created by joao_gabriel on 16/08/2018.
@@ -68,7 +69,7 @@ public abstract class RecyclerViewAdapterSection<ROW extends RecyclerView.ViewHo
     }
 
     public void onItemClick(int position) {}
-    public void onHeaderClick() {}
+    public void onHeaderClick(float x, float y) {}
 
     public final void notifyDataSetChanged() {
         if(adapter != null) {

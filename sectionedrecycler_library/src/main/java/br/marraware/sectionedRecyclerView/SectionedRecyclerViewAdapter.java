@@ -1,13 +1,17 @@
 package br.marraware.sectionedRecyclerView;
 
 import android.os.Handler;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import java.io.Console;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,14 +39,21 @@ public class SectionedRecyclerViewAdapter extends RecyclerView.Adapter implement
 
     private boolean stickHeader = true;
     private HeaderItemDecoration decoration;
+    private GestureDetector gestureDetector;
+    private GestureDetector.OnGestureListener gestureListener = new GestureDetector.SimpleOnGestureListener() {
+        @Override
+        public boolean onSingleTapUp(MotionEvent e) {
+            return true;
+        }
+    };
     private RecyclerView.OnItemTouchListener onItemTouchListener = new RecyclerView.OnItemTouchListener() {
         @Override
         public boolean onInterceptTouchEvent(RecyclerView recyclerView, MotionEvent motionEvent) {
-            if(motionEvent.getAction() == MotionEvent.ACTION_UP) {
+            if(gestureDetector.onTouchEvent(motionEvent)) {
                 int overSection = decoration.overSectionOnPosition(motionEvent.getX(), motionEvent.getY());
                 if(overSection != -1) {
                     if (overSection < sectionList.size()) {
-                        sectionList.get(overSection).onHeaderClick();
+                        sectionList.get(overSection).onHeaderClick(motionEvent.getX(), motionEvent.getY());
                         return true;
                     }
                 }
@@ -51,13 +62,13 @@ public class SectionedRecyclerViewAdapter extends RecyclerView.Adapter implement
                     int section = decoration.sectionForHeaderOnPosition(motionEvent.getX(), motionEvent.getY());
                     if (section != -1) {
                         if (section < sectionList.size()) {
-                            sectionList.get(section).onHeaderClick();
+                            sectionList.get(section).onHeaderClick(motionEvent.getX(), motionEvent.getY());
                             return true;
                         }
                     }
                 }
             }
-            return false;
+            return  false;
         }
 
         @Override
@@ -336,6 +347,7 @@ public class SectionedRecyclerViewAdapter extends RecyclerView.Adapter implement
         recyclerView.addOnItemTouchListener(onItemTouchListener);
         checkForGridLayout = false;
         this.recyclerView = recyclerView;
+        gestureDetector = new GestureDetector(recyclerView.getContext(), gestureListener);
     }
 
     @Override
