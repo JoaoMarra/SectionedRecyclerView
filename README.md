@@ -7,15 +7,16 @@ First add on you project\`s build.gradle :
 
 ```
 allprojects {
-    repositories {
-        jcenter()
-    }
+	repositories {
+		...
+		maven { url 'https://jitpack.io' }
+	}
 }
 ```
 
 Now add on your app module\`s build.gradle dependecy:
 ```
-compile 'br.marraware:sectionedrecycler_library:2.0'
+implementation 'com.github.JoaoMarra:SectionedRecyclerView:3.1'
 ```
 
 # How to use
